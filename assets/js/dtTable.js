@@ -1,3 +1,5 @@
+
+
 class DtTable extends React.Component{
 	constructor(props){
 		super(props);
@@ -12,7 +14,7 @@ class DtTable extends React.Component{
 					{
 						conditions : [""],
 						actions : [""]
-					}					
+					}			
 				]					
 			}
 		}
@@ -24,20 +26,19 @@ class DtTable extends React.Component{
 
     var dtDatas = this.state.dtData;
 
-    if(cellType == "condition"){
-      dtDatas.names.conditions[index] = value;
-    }
+    switch (cellType)
+    {
+      case 'condition' : dtDatas.names.conditions[index] = value;
+      break;
 
-    if(cellType == "action"){
-      dtDatas.names.actions[index] = value;
-    }
+      case 'action' : dtDatas.names.actions[index] = value;
+      break;
 
-    if(cellType == "ruleCondition"){
-      dtDatas.rules[ruleIndex].conditions[index] = value;
-    }
+      case 'ruleCondition' : dtDatas.rules[ruleIndex].conditions[index] = value;
+      break;
 
-    if(cellType == "ruleAction"){
-      dtDatas.rules[ruleIndex].actions[index] = value;
+      case 'ruleAction' : dtDatas.rules[ruleIndex].actions[index] = value;
+      break;
     }
 
     this.setState({dtData:dtDatas});
