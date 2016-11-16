@@ -1,5 +1,3 @@
-
-
 class DtTable extends React.Component{
 	constructor(props){
 		super(props);
@@ -7,24 +5,36 @@ class DtTable extends React.Component{
 			dtData:{
 				names:{
 					conditions : [""],
-					actions : [""]
+					actions : ["",""]
 				},
 
 				rules:[
 					{
 						conditions : [""],
 						actions : [""]
-					}			
-				]					
+					},
+          {
+            conditions : [""],
+            actions : [""]
+          }
+				]
+			},
+			currentIndex:{
+				rowIndex:null,
+				colIndex:null
 			}
 		}
 
-		this.handler = this.handler.bind(this);		
-	}; 
+		this.handler = this.handler.bind(this);
+	};
 
 	handler(cellType,index,value,ruleIndex) {
 
     var dtDatas = this.state.dtData;
+	var currentIndex = this.state.currentIndex;		
+
+    currentIndex.rowIndex = index;
+    currentIndex.colIndex = ruleIndex;
 
     switch (cellType)
     {
@@ -42,9 +52,11 @@ class DtTable extends React.Component{
     }
 
     this.setState({dtData:dtDatas});
-   	
-		console.log(JSON.stringify(this.state.dtData));  
-       
+	this.setState({currentIndex : currentIndex});	
+
+	console.log(JSON.stringify(this.state.currentIndex));
+    console.log(JSON.stringify(this.state.dtData));
+
 	}
 
 	render(){
@@ -69,7 +81,7 @@ class Theader extends React.Component{
 						return(
 							<th>{index+1}</th>
 						);
-					})}					
+					})}
 				</tr>
 			</thead>
 		);
@@ -81,35 +93,34 @@ class Condition extends React.Component{
     super(props);
     this.conditionHandler = this.conditionHandler.bind(this);
   }
-	render(){	
-    return(			
+	render(){
+    return(
 			<tbody>
 				{
 					this.props.myCondition.map((conData, conIndex) => {
-						return (					
+						return (
 							<tr key={conIndex}>
-							 <th>{conIndex+1}</th>
+							<th>{conIndex+1}</th>
 
-                <Cell cellType="condition" index={conIndex} value={conData} callbackChild={this.conditionHandler}/>
-
-                {
-                  this.props.myConRule.map((ruleConData, ruleIndex) => {
-								    return(                  
-                      <Cell cellType="ruleCondition" index={conIndex} ruleIndex={ruleIndex} value={ruleConData.conditions[conIndex]} callbackChild={this.conditionHandler}/>									
-								    );
-							   })
-                }
+			                <Cell cellType="condition" index={conIndex} value={conData} callbackChild={this.conditionHandler}/>
+			                {
+			                  	this.props.myConRule.map((ruleConData, ruleIndex) => {
+									return(
+			                      		<Cell cellType="ruleCondition" index={conIndex} ruleIndex={ruleIndex} value={ruleConData.conditions[conIndex]} callbackChild={this.conditionHandler}/>
+									);
+								})
+			                }
 							</tr>
-						);          			
-       		})
+						);
+       				})
 				}
-			</tbody>		
+			</tbody>
 		);
 	}
 
   conditionHandler(cellType,index,value,ruleIndex){    
     this.props.callbackParent(cellType,index,value,ruleIndex);
-  } 
+  }
 }
 
 class Action extends React.Component{
@@ -125,26 +136,26 @@ class Action extends React.Component{
 						return (
 							<tr key={actionIndex}>
 							<th>{actionIndex+1}</th>
-              <Cell cellType="action" index={actionIndex} value={actionData} callbackChild={this.actionHandler}/>
-						
+              				<Cell cellType="action" index={actionIndex} value={actionData} callbackChild={this.actionHandler}/>
+
 							{
-                this.props.myActionRule.map((ruleActionData, ruleIndex) => {
-								  return(
-                    <Cell cellType="ruleAction" index={actionIndex} ruleIndex={ruleIndex} value={ruleActionData.actions[actionIndex]} callbackChild={this.actionHandler}/>
+                				this.props.myActionRule.map((ruleActionData, ruleIndex) => {
+									return(
+                    					<Cell cellType="ruleAction" index={actionIndex} ruleIndex={ruleIndex} value={ruleActionData.actions[actionIndex]} callbackChild={this.actionHandler}/>
 									);
-							 })
-              }
+							 	})
+              				}
 							</tr>
-						);          			
-       		})
-				}	
-			</tbody>		
+						);
+       				})
+				}
+			</tbody>
 		);
 	}
 
    actionHandler(cellType,index,value,ruleIndex){    
-    this.props.callbackParent(cellType,index,value,ruleIndex);
-  } 
+   	this.props.callbackParent(cellType,index,value,ruleIndex);
+  }
 }
 
 class Cell extends React.Component{
@@ -154,17 +165,17 @@ class Cell extends React.Component{
   }
   render(){
     return(
-      <td><input type="text" value={this.props.value} onChange={this.cellHandler}/></td>
+      <td><input className="context-menu-one" type="text" value={this.props.value} onChange={this.cellHandler} onFocus={this.cellHandler}/></td>
       );
   }
   cellHandler(event){
     var cellType = this.props.cellType;
     var index = this.props.index;
     var value = event.target.value;
-    var ruleIndex = this.props.ruleIndex;
+    var ruleIndex = this.props.ruleIndex;    
     this.props.callbackChild(cellType,index,value,ruleIndex);
   }
-  
+
 }
 
 ReactDOM.render(<DtTable />, document.getElementById('center'));
