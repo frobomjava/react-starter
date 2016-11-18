@@ -5,34 +5,47 @@ class DtTable extends React.Component{
 			dtData:{
 				names:{
 					conditions : [""],
-					actions : ["",""]
+					actions : [""]
 				},
 
 				rules:[
 					{
 						conditions : [""],
 						actions : [""]
-					},
-          {
-            conditions : [""],
-            actions : [""]
-          }
+					},		       
 				]
 			},
 			currentIndex:{
-				rowIndex:null,
-				colIndex:null
+				cellType:"",
+				rowIndex:"",
+				colIndex:""
 			}
 		}
 
 		this.handler = this.handler.bind(this);
+		this.addSubscribe = this.addSubscribe.bind(this);
+		this.addRowColumn = this.addRowColumn.bind(this);
 	};
+
+	componentWillMount(){		
+		PubSub.subscribe( "contextMenuEvent", this.addSubscribe );
+	};
+
+	addSubscribe(msg,data){
+		var cellType = this.state.currentIndex.cellType;
+		var columnIndex = this.state.currentIndex.colIndex;
+		var rowIndex = this.state.currentIndex.rowIndex;
+		this.addRowColumn(rowIndex,columnIndex,cellType,data);	
+	};
+
+	
 
 	handler(cellType,index,value,ruleIndex) {
 
     var dtDatas = this.state.dtData;
 	var currentIndex = this.state.currentIndex;		
 
+	currentIndex.cellType = cellType;
     currentIndex.rowIndex = index;
     currentIndex.colIndex = ruleIndex;
 
@@ -52,11 +65,82 @@ class DtTable extends React.Component{
     }
 
     this.setState({dtData:dtDatas});
-	this.setState({currentIndex : currentIndex});	
+	this.setState({currentIndex : currentIndex});   
+	}
 
-	console.log(JSON.stringify(this.state.currentIndex));
-    console.log(JSON.stringify(this.state.dtData));
+	addRowColumn(rowIndex,columnIndex,cellType,data){
+			
+		var dtDatas = this.state.dtData;
+		var columnLength = this.state.dtData.rules.length;
+		var conditionsLength = this.state.dtData.names.conditions.length;
+		var actionsLength = this.state.dtData.names.actions.length;
+		
+		var newRule = {
+			           conditions :[] ,
+			           actions : []
+			        };
 
+		for(var con = 0; con < conditionsLength; con++){
+				newRule.conditions.splice(con,0,"");
+		}
+		for(var act = 0; act < actionsLength; act++){
+				newRule.actions.splice(act,0,"");
+		}
+		
+		if(data == "Add Column Right"){
+			columnIndex++;
+            dtDatas.rules.splice(columnIndex, 0, newRule);
+		}else if(data == "Add Column Left"){			
+            dtDatas.rules.splice(columnIndex, 0, newRule);
+		}else if(data == "Delete Column" && columnLength != 1){
+            dtDatas.rules.splice(columnIndex, 1);
+		}else if(data == "Add Row Above" && (cellType == "condition" || cellType == "ruleCondition")){
+
+            dtDatas.names.conditions.splice(rowIndex,0,"");
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].conditions.splice(rowIndex,0,"");
+            }
+
+		}else if(data == "Add Row Below" && (cellType == "condition" || cellType == "ruleCondition")){
+			
+			rowIndex++;
+            dtDatas.names.conditions.splice(rowIndex,0,"");
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].conditions.splice(rowIndex,0,"");
+            }
+
+		}else if(data == "Add Row Above" && (cellType == "action" || cellType == "ruleAction")){			
+            
+            dtDatas.names.actions.splice(rowIndex,0,"");
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].actions.splice(rowIndex,0,"");
+            }
+
+		}else if(data == "Add Row Below" && (cellType == "action" || cellType == "ruleAction")){
+			
+			rowIndex++;
+            dtDatas.names.actions.splice(rowIndex,0,"");
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].actions.splice(rowIndex,0,"");
+            }
+
+		}else if(data == "Delete Row" && (cellType == "condition" || cellType == "ruleCondition") && conditionsLength != 1){			
+			
+            dtDatas.names.conditions.splice(rowIndex,1);
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].conditions.splice(rowIndex,1);
+            }
+
+		}else if(data == "Delete Row" && (cellType == "action" || cellType == "ruleAction") && actionsLength != 1){			
+			
+            dtDatas.names.actions.splice(rowIndex,1);
+            for(var i=0; i< columnLength; i++){
+            	dtDatas.rules[i].actions.splice(rowIndex,1);
+            }
+
+		}
+		this.setState({dtData:dtDatas});
+		console.log(JSON.stringify(this.state.dtData));	
 	}
 
 	render(){
@@ -89,10 +173,10 @@ class Theader extends React.Component{
 }
 
 class Condition extends React.Component{
-  constructor(props){
+	constructor(props){
     super(props);
     this.conditionHandler = this.conditionHandler.bind(this);
-  }
+  	}
 	render(){
     return(
 			<tbody>
@@ -117,17 +201,16 @@ class Condition extends React.Component{
 			</tbody>
 		);
 	}
-
-  conditionHandler(cellType,index,value,ruleIndex){    
+	conditionHandler(cellType,index,value,ruleIndex){    
     this.props.callbackParent(cellType,index,value,ruleIndex);
-  }
+  	}
 }
 
 class Action extends React.Component{
-  constructor(props){
+  	constructor(props){
     super(props);
     this.actionHandler = this.actionHandler.bind(this);
-  }
+  	}
 	render(){
 		return(
 			<tbody>
@@ -153,29 +236,28 @@ class Action extends React.Component{
 		);
 	}
 
-   actionHandler(cellType,index,value,ruleIndex){    
+   	actionHandler(cellType,index,value,ruleIndex){    
    	this.props.callbackParent(cellType,index,value,ruleIndex);
-  }
+  	}
 }
 
 class Cell extends React.Component{
-  constructor(props){
+  	constructor(props){
     super(props);
     this.cellHandler = this.cellHandler.bind(this);
-  }
-  render(){
-    return(
-      <td><input className="context-menu-one" type="text" value={this.props.value} onChange={this.cellHandler} onFocus={this.cellHandler}/></td>
-      );
-  }
-  cellHandler(event){
-    var cellType = this.props.cellType;
-    var index = this.props.index;
-    var value = event.target.value;
-    var ruleIndex = this.props.ruleIndex;    
-    this.props.callbackChild(cellType,index,value,ruleIndex);
-  }
-
+  	}
+  	render(){
+    	return(
+      	<td><input className="context-menu-one" type="text" value={this.props.value} onChange={this.cellHandler} onFocus={this.cellHandler}/></td>
+      	);
+  	}
+  	cellHandler(event){
+    	var cellType = this.props.cellType;
+    	var index = this.props.index;
+    	var value = event.target.value;
+    	var ruleIndex = this.props.ruleIndex;    
+    	this.props.callbackChild(cellType,index,value,ruleIndex);
+  	}
 }
 
 ReactDOM.render(<DtTable />, document.getElementById('center'));
