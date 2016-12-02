@@ -2,7 +2,8 @@ class DtTable extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			dtData:{
+			dtData:
+			{
 				names:{
 					conditions : [""],
 					actions : [""]
@@ -24,7 +25,7 @@ class DtTable extends React.Component{
 
 		this.handler = this.handler.bind(this);
 		this.addSubscribe = this.addSubscribe.bind(this);
-		this.addRowColumn = this.addRowColumn.bind(this);
+		this.contextMenuAction = this.contextMenuAction.bind(this);
 	};
 
 	componentWillMount(){		
@@ -35,32 +36,30 @@ class DtTable extends React.Component{
 		var cellType = this.state.currentIndex.cellType;
 		var columnIndex = this.state.currentIndex.colIndex;
 		var rowIndex = this.state.currentIndex.rowIndex;
-		this.addRowColumn(rowIndex,columnIndex,cellType,data);	
-	};
+		this.contextMenuAction(rowIndex,columnIndex,cellType,data);	
+	};	
 
-	
-
-	handler(cellType,index,value,ruleIndex) {
+	handler(cellType,currentRowIndex,value,currentColumnIndex) {
 
     var dtDatas = this.state.dtData;
 	var currentIndex = this.state.currentIndex;		
 
 	currentIndex.cellType = cellType;
-    currentIndex.rowIndex = index;
-    currentIndex.colIndex = ruleIndex;
+    currentIndex.rowIndex = currentRowIndex;
+    currentIndex.colIndex = currentColumnIndex;
 
     switch (cellType)
     {
-      case 'condition' : dtDatas.names.conditions[index] = value;
+      case 'condition' : dtDatas.names.conditions[currentRowIndex] = value;
       break;
 
-      case 'action' : dtDatas.names.actions[index] = value;
+      case 'action' : dtDatas.names.actions[currentRowIndex] = value;
       break;
 
-      case 'ruleCondition' : dtDatas.rules[ruleIndex].conditions[index] = value;
+      case 'ruleCondition' : dtDatas.rules[currentColumnIndex].conditions[currentRowIndex] = value;
       break;
 
-      case 'ruleAction' : dtDatas.rules[ruleIndex].actions[index] = value;
+      case 'ruleAction' : dtDatas.rules[currentColumnIndex].actions[currentRowIndex] = value;
       break;
     }
 
@@ -68,7 +67,7 @@ class DtTable extends React.Component{
 	this.setState({currentIndex : currentIndex});   
 	}
 
-	addRowColumn(rowIndex,columnIndex,cellType,data){
+	contextMenuAction(rowIndex,columnIndex,cellType,data){
 			
 		var dtDatas = this.state.dtData;
 		var columnLength = this.state.dtData.rules.length;
@@ -186,11 +185,11 @@ class Condition extends React.Component{
 							<tr key={conIndex}>
 							<th>{conIndex+1}</th>
 
-			                <Cell cellType="condition" index={conIndex} value={conData} callbackChild={this.conditionHandler}/>
+			                <Cell cellType="condition" rowIndex={conIndex} value={conData} callbackChild={this.conditionHandler}/>
 			                {
 			                  	this.props.myConRule.map((ruleConData, ruleIndex) => {
 									return(
-			                      		<Cell cellType="ruleCondition" index={conIndex} ruleIndex={ruleIndex} value={ruleConData.conditions[conIndex]} callbackChild={this.conditionHandler}/>
+			                      		<Cell cellType="ruleCondition" rowIndex={conIndex} columnIndex={ruleIndex} value={ruleConData.conditions[conIndex]} callbackChild={this.conditionHandler}/>
 									);
 								})
 			                }
@@ -201,8 +200,8 @@ class Condition extends React.Component{
 			</tbody>
 		);
 	}
-	conditionHandler(cellType,index,value,ruleIndex){    
-    this.props.callbackParent(cellType,index,value,ruleIndex);
+	conditionHandler(cellType,currentRowIndex,value,currentColumnIndex){    
+    this.props.callbackParent(cellType,currentRowIndex,value,currentColumnIndex);
   	}
 }
 
@@ -219,12 +218,12 @@ class Action extends React.Component{
 						return (
 							<tr key={actionIndex}>
 							<th>{actionIndex+1}</th>
-              				<Cell cellType="action" index={actionIndex} value={actionData} callbackChild={this.actionHandler}/>
+              				<Cell cellType="action" rowIndex={actionIndex} value={actionData} callbackChild={this.actionHandler}/>
 
 							{
                 				this.props.myActionRule.map((ruleActionData, ruleIndex) => {
 									return(
-                    					<Cell cellType="ruleAction" index={actionIndex} ruleIndex={ruleIndex} value={ruleActionData.actions[actionIndex]} callbackChild={this.actionHandler}/>
+                    					<Cell cellType="ruleAction" rowIndex={actionIndex} columnIndex={ruleIndex} value={ruleActionData.actions[actionIndex]} callbackChild={this.actionHandler}/>
 									);
 							 	})
               				}
@@ -236,8 +235,8 @@ class Action extends React.Component{
 		);
 	}
 
-   	actionHandler(cellType,index,value,ruleIndex){    
-   	this.props.callbackParent(cellType,index,value,ruleIndex);
+   	actionHandler(cellType,currentRowIndex,value,currentColumnIndex){    
+   	this.props.callbackParent(cellType,currentRowIndex,value,currentColumnIndex);
   	}
 }
 
@@ -253,11 +252,11 @@ class Cell extends React.Component{
   	}
   	cellHandler(event){
     	var cellType = this.props.cellType;
-    	var index = this.props.index;
+    	var currentRowIndex = this.props.rowIndex;
     	var value = event.target.value;
-    	var ruleIndex = this.props.ruleIndex;    
-    	this.props.callbackChild(cellType,index,value,ruleIndex);
+    	var currentColumnIndex = this.props.columnIndex;    
+    	this.props.callbackChild(cellType,currentRowIndex,value,currentColumnIndex);
   	}
 }
 
-ReactDOM.render(<DtTable />, document.getElementById('center'));
+ReactDOM.render(<DtTable />, document.getElementById('centerID'));

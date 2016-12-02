@@ -3,21 +3,66 @@
 	<meta charset="utf-8">
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 
+	<script src="/js/dependencies/sails.io.js"></script>
+
 	<link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="/styles/main.css" />
 	<script src="/js/dependencies/ajax.googleapis.com-ajax-libs-jquery-1.12.4-jquery.min.js"></script>
 	<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
 	<script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 
 	<script src="/js/dependencies/react.js"></script>
 	<script src="/js/dependencies/react-dom.js"></script>
 	<script src="/js/dependencies/pubsub.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
 
+	<script type="text/babel" src="/js/createFile.js"></script>
 	<script type="text/babel" src="/js/dtTable.js"></script>
 	<script type="text/javascript" src="/js/contextmenu.js"></script>
 
 </head>
 <body>	
-<div id="center"></div>
+<div class="container">
+
+		<div class="headerDiv"></div>
+
+		<div class="contentDiv">
+			
+			<div class="left" id="leftID">
+				
+				<div class='titleMenu' id='titleMenuID'>
+					
+					<span id='minusID'>- -</span>
+
+					<span>Folder</span>
+
+					<span><div class='createButton' id='createButtonID'></div></span>
+
+				</div>
+
+				<div class='newProjectCreate'> <ul id='treeID'></ul></div>
+
+			</div>
+
+			<div class="center" id="centerID"></div>
+
+			<div class="bottomOfCenter" id="bottomOfCenterID"></div>			
+
+			<div class="right" id="rightID">
+
+				<div id="title_barID">
+
+					<div id="restoreButtonID">-</div>
+
+				</div>
+
+				<div id="boxID"></div>
+
+			</div>
+
+		</div>
+
+	</div>
 </body>
 </html>

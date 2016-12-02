@@ -15,7 +15,7 @@ $(function($){
             "Add Row Below": {name: "Add Row Below", icon: "add"},
             "Delete Row": {name: "Delete Row", icon: "delete"},
             "sep2": "---------",
-            "quit": {name: "Quit", icon: function(){
+            "Quit": {name: "Quit", icon: function(){
                 return 'context-menu-icon context-menu-icon-quit';
             }}
         }

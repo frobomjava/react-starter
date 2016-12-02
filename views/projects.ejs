@@ -1,0 +1,22 @@
+<html>
+<head>
+<head>
+	<meta charset="utf-8">
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<script src="/js/dependencies/sails.io.js"></script>
+</head>
+<body>
+	<br><a href = '/<%= userName %>/signout'> Signout </a><br>
+	<br><a href = '/<%= userName %>/projects/new'> Create A Project </a><br>
+	<h1>Project Lists</h1>
+	<div id='projectListDivId'>
+
+		<script type="text/javascript">
+			io.socket.get('/<%= userName %>/projects', function (projectLists,respond) {
+				document.getElementById('projectListDivId').innerHTML = JSON.stringify(projectLists) ;
+			});
+		</script>
+
+	</div>
+</body>
+</html>

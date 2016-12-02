@@ -32,13 +32,23 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
-  },
+  '/': 'UserController.index',
 
-  'get /dtView':{
-    view: 'dtTable'
-  }
+  'get /signup': { view: 'signup' },
+
+  'post /signup': 'UserController.signup',
+
+  'get /signin': { view: 'signin' },
+
+  'post /signin': 'UserController.signin',
+
+  'get /:userName/signout' : 'UserController.signout',
+
+  'get /:userName/projects/new': 'ProjectController.index',
+
+  'post /:userName/projects/new': 'ProjectController.create',
+
+  'get /:userName/projects': 'ProjectController.getAllProjects'  
 
   /***************************************************************************
   *                                                                          *
