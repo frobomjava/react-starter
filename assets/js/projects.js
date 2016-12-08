@@ -17,14 +17,13 @@ class ProjectsListRender extends React.Component{
     io.socket.on('newProject', function(newProject) { 
       self.updateProjectsList(newProject);	
     });
-
 	};
 
 	updateProjectsList(newProject){		
 		var projects = this.state.projects.slice(0);
 		projects.push(newProject);
-		this.setState({projects:projects});
-		console.log("update data = " + JSON.stringify(this.state.projects));
+		this.setState({projects:projects});	
+		 document.getElementById('newProjectID').value = "";	
 	};
 	
 

@@ -56,30 +56,24 @@ module.exports = {
 
 						return res.serverError(err);
 
-					} else if(user){				
+					} else if(user){			
 
-						var pName = newProjectData.projectName;
-					
+						var pName = newProjectData.projectName;					
 
 						Project.create({
 						projectName: pName,
 						user: user,
 						url: projectDir}).exec(function(err,newProject){
-
-							if(err){							
-
+							if(err){
 								return res.serverError(err);
-
-							} else {
-								
-								sails.sockets.broadcast('socketRoom', 'newProject',newProject);
+							} else {								
+								sails.sockets.broadcast('socketRoom', 'newProject', newProject);
+								return res.ok(newProject);
 								//return res.redirect('/'+ userName +'/projects');
 							}
-
 						});
 
-					} else {					
-
+					} else {
 						return res.serverError(err);
 					}
 

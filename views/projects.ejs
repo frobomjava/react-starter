@@ -17,11 +17,20 @@
 	<h1>Project Lists</h1>
 	<div id='projectListDivId'></div>
 	<div id='projectCreateDivID'>
-	<h3>Create A Project</h3>
-		<form action="/<%= userName %>/projects/new" method="post">
-		<input type='text' placeholder='Project Name' name='projectName'/>
-		<input type='submit' value='create'/><br><br>
-		</form>
+		<h3>Create A Project</h3>		
+		<input type='text' id='newProjectID' placeholder='Project Name' name='projectName'/>
+		<input type='submit' value='create' onclick='sendData()'/><br><br>
 	</div>
 </body>
+
+<script type="text/javascript">
+function sendData() {
+	var pName = document.getElementById('newProjectID').value;	
+    io.socket.post('/<%= userName %>/projects/new', { projectName: pName }, function (resData, jwRes) {
+    	console.log("jwRes = " +  jwRes.statusCode);
+    	console.log("resData = " + JSON.stringify(resData));
+  });
+}
+</script>
+
 </html>
