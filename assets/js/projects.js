@@ -1,9 +1,12 @@
-class ProjectsListRender extends React.Component{
+class ProjectsListComponent extends React.Component{
 
 	constructor(props){
 		super(props);
 		console.log("initial ");
-		this.state = { projects: projectsList }		
+		this.state = { 
+			projects: projectsList ,
+			userName: userName
+		}		
 		this.updateProjectsList = this.updateProjectsList.bind(this);
 	};   
 
@@ -29,19 +32,21 @@ class ProjectsListRender extends React.Component{
 
     render(){
 		return(		
-		<ProjectComponent myApp={this.state.projects} />				
+		<ProjectComponent myProjects={this.state.projects} myUserName={this.state.userName}/>				
 		);
 	};
 }
 
 class ProjectComponent extends React.Component{
-	render(){
-		
-		return(
+	render(){	
+		return(			
 			<ol>		
-				{this.props.myApp.map((projects,index) => {					
+				{this.props.myProjects.map((projects,index) => {
+				var userName = this.props.myUserName;				
+				var projID = projects.id;				
+				var url = "/" + userName + "/projects/in/" + projID;
 				return(	
-					<li key={index}><a href="">{projects.projectName}</a></li>	
+					<li key={index}><a href={url}>{projects.projectName}</a></li>	
 				);
 			})}
 			</ol>				
@@ -49,4 +54,4 @@ class ProjectComponent extends React.Component{
 	}
 }
 
-ReactDOM.render(<ProjectsListRender />, document.getElementById('projectListDivId'));
+ReactDOM.render(<ProjectsListComponent />, document.getElementById('projectListDivId'));

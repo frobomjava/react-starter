@@ -18,6 +18,7 @@ module.exports = {
 	},	*/
 
 	create: function(req,res) {
+		
 		var userName = req.param('userName');
 	
 		var newProjectData = req.params.all();	
@@ -56,7 +57,7 @@ module.exports = {
 
 						return res.serverError(err);
 
-					} else if(user){			
+					} else if(user) {
 
 						var pName = newProjectData.projectName;					
 
@@ -68,17 +69,15 @@ module.exports = {
 								return res.serverError(err);
 							} else {								
 								sails.sockets.broadcast('socketRoom', 'newProject', newProject);
-								return res.ok(newProject);
-								//return res.redirect('/'+ userName +'/projects');
+								return res.ok(newProject);								
 							}
 						});
 
-					} else {
-						return res.serverError(err);
 					}
-
 				});
 			}
+		} else {
+			return res.redirect('/');
 		}
 	},	
 
@@ -88,24 +87,21 @@ module.exports = {
 
 		if (userName == req.session.userName) {
 
-			var userId = req.session.userId;	
+			var userId = req.session.userId;
+
 			Project.find({user: userId}).sort('projectName ASC').exec(function(err, projects) {					
 				if (err) {
 					return res.serverError(err);
 				} else if (projects) {
 					ProjectService.projectDirectory[userId] = projects;									
-					var projectsName = projects.map(function(project){
+					/*var projectsName = projects.map(function(project){
 						return project.projectName;
-					});								
-					console.log(projects);
+					});*/				
 					return res.view('projects', {projectsList : projects , 'userName' : req.session.userName});					
-					
-				} else {
-					res.serverError(err);
 				}
 			});					
 		} else {
-			res.view('home');	
+			return res.redirect('/');	
 		}		
 	},
 

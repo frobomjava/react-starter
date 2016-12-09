@@ -8,29 +8,31 @@
 	<script src="/js/dependencies/react.js"></script>
 	<script src="/js/dependencies/react-dom.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
-	<script>var projectsList = <%- JSON.stringify(projectsList) %>;</script>
+	<script>
+		var projectsList = <%- JSON.stringify(projectsList) %>;
+		var userName = <%- JSON.stringify(userName) %> ;
+	</script>
 	<script type="text/babel" src="/js/projects.js"></script>	
 </head>
 <body>
-	<br><a href = '/<%= userName %>/signout'> Signout </a><br>
-<!-- 	<br><a href = '/<%= userName %>/projects/new'> Create A Project </a><br> -->
-	<h1>Project Lists</h1>
-	<div id='projectListDivId'></div>
+	<br><a href = '/<%= userName %>/signout'> Signout </a><br>	
 	<div id='projectCreateDivID'>
 		<h3>Create A Project</h3>		
 		<input type='text' id='newProjectID' placeholder='Project Name' name='projectName'/>
 		<input type='submit' value='create' onclick='sendData()'/><br><br>
 	</div>
+	<h1>Project Lists</h1>
+	<div id='projectListDivId'></div>
 </body>
 
 <script type="text/javascript">
-function sendData() {
-	var pName = document.getElementById('newProjectID').value;	
-    io.socket.post('/<%= userName %>/projects/new', { projectName: pName }, function (resData, jwRes) {
-    	console.log("jwRes = " +  jwRes.statusCode);
-    	console.log("resData = " + JSON.stringify(resData));
-  });
-}
+	function sendData() {
+		var pName = document.getElementById('newProjectID').value;	
+	    io.socket.post('/<%= userName %>/projects/new', { projectName: pName }, function (resData, jwRes) {
+	    	console.log("jwRes = " +  jwRes.statusCode);
+	    	console.log("resData = " + JSON.stringify(resData));
+	  });
+	}
 </script>
 
 </html>

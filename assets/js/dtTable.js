@@ -260,4 +260,4 @@ class Cell extends React.Component{
   	}
 }
 
-ReactDOM.render(<DtTable />, document.getElementById('center'));
+ReactDOM.render(<DtTable />, document.getElementById('centerID'));
