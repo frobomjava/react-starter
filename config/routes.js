@@ -52,11 +52,15 @@ module.exports.routes = {
 
   'get /:userName/projects': 'ProjectController.getAllProjects',
 
-  'get /:userName/projects/in/:projectId': 'DtFileController.getAllFiles',
+  //'get /:userName/projects/in/:projectId': 'DtFileController.getAllFiles',
+  'get /:userName/projects/in/:projectName': 'DtFileController.getAllFiles',
 
-  'post /:userName/projects/in/:projectId/files/new': 'DtFileController.create',
+  //'post /:userName/projects/in/:projectId/files/new': 'DtFileController.create',
+  'post /:userName/projects/in/:projectName/files/new': 'DtFileController.create',
 
-  'get /file/socket/join': 'DtFileController.socketJoin'
+  'get /file/socket/join': 'DtFileController.socketJoin',
+
+  'get /:userName/projects/in/:projectName/files/get/:fileName': 'DtFileController.loadFile'
 
   /***************************************************************************
   *                                                                          *

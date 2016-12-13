@@ -1,20 +1,9 @@
-class DtTable extends React.Component{
+class DtTableComponent extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			dtData:{
-				names:{
-					conditions : [""],
-					actions : [""]
-				},
-
-				rules:[
-					{
-						conditions : [""],
-						actions : [""]
-					},		       
-				]
-			},
+		this.state = { 
+			dtData : dtFileJSONData , 
+			
 			currentIndex:{
 				cellType:"",
 				rowIndex:"",
@@ -27,7 +16,7 @@ class DtTable extends React.Component{
 		this.addRowColumn = this.addRowColumn.bind(this);
 	};
 
-	componentWillMount(){		
+	componentWillMount(){
 		PubSub.subscribe( "contextMenuEvent", this.addSubscribe );
 	};
 
@@ -260,4 +249,4 @@ class Cell extends React.Component{
   	}
 }
 
-ReactDOM.render(<DtTable />, document.getElementById('centerID'));
+ReactDOM.render(<DtTableComponent />, document.getElementById('centerID'));

@@ -15,7 +15,8 @@ module.exports = {
 		};	
 	
 		var projectData = {
-			projectId: req.param('projectId')
+			//projectId: req.param('projectId')
+			projectName: req.param('projectName')
 		};
 
 		var fileData = {
@@ -41,13 +42,17 @@ module.exports = {
 				},
 
 				function checkProject(callback) {
+
 					
-					Project.findOne({id: projectData.projectId}).exec(function(err,projects){				
+					
+					Project.findOne({user: projectData.user , projectName: projectData.projectName}).exec(function(err,projects){				
 						if (err) {
 							callback(err);
 						} else if (projects) {
+							console.log("projectData.id === " + projects.id);
+							
 							fileData.project = projects.id;
-							projectData.projectName = projects.projectName;
+							//projectData.projectName = projects.projectName;
 							callback();
 						}
 					});	
@@ -58,8 +63,7 @@ module.exports = {
 					fileData.url = fileDir ;
 					console.log("File Url = " + fileDir);
 					var obj = {
-
-						dtData:{
+						
 							names:{
 								conditions : [""],
 								actions : [""]
@@ -71,7 +75,7 @@ module.exports = {
 									actions : [""]
 								},		       
 							]
-						}
+						
 					}
 
 					jsonFile.writeFile(fileDir, obj, function(err){
@@ -84,7 +88,7 @@ module.exports = {
 									callback(err);
 								} else {								
 									sails.sockets.broadcast("socketProjectRoom", 'newFile', newDtfileData);
-									return res.ok(newDtfileData);								
+									return res.ok();								
 								}
 							}); 
 						}
@@ -105,7 +109,8 @@ module.exports = {
 			userName: req.param('userName')
 		};
 		var projData = {
-			projectId: req.param('projectId')
+			//projectId: req.param('projectId')
+			projectName: req.param('projectName')
 		};
 
 		if (userData.userName == req.session.userName) {
@@ -119,6 +124,7 @@ module.exports = {
 							callback(err);
 						} else if (users) {
 							projData.user = users.id;
+							req.session.userName = users.userName;
 							callback();
 						} 
 					});
@@ -128,31 +134,34 @@ module.exports = {
 					
 					var userId = req.session.userId;
 
-					Project.findOne({user: userId}).exec(function(err, projects) {					
+					Project.findOne({user: projData.user , projectName: projData.projectName}).exec(function(err, projects) {					
 						if (err) {
 							callback(err);
 						} else if (projects) {
+						//	console.log("--- Prjects --- " + projects.id + "--- " + projects.projectName);
+							req.session.projectName = projects.projectName;
+							projData.id = projects.id;
 							DtFile.project = projects.id;
 							callback();
 						}
 					});	
 				},
 
-				function findDtFile(callback){
+				function findDtFile(callback){					
 					
-					DtFile.find({project: projData.projectId}).exec(function(err,files){
+					DtFile.find({project: projData.id}).exec(function(err,files){
 						if(err) {
 							callback(err);
 						} else if (files){
-							DtFileService.fileDirectory[projData.projectId] = files;
+								
+							DtFileService.fileDirectory[projData.id] = files;
 									
 							var fileName = files.map(function(file){
             					return file.fileName;
 							});
 							console.log("----FileDatas------" + fileName);
-;
-							return res.view('dtTable', {filesList : files, projectId: projData.projectId, userName: userData.userName});
-
+							//return res.view('dtTable', {filesList : files, projectId: projData.projectId, userName: userData.userName});
+							return res.view('workSpace', {filesList : files, projectName: projData.projectName, userName: userData.userName});
 						}
 					});
 				}
@@ -161,6 +170,46 @@ module.exports = {
         		return res.serverError(err);
 			})	
 		} 	
+	},
+
+	loadFile: function(req,res) {
+
+		console.log("load File");
+
+		var userData = {
+			userName: req.param('userName')
+		};	
+	
+		var projectData = {
+			//projectId: req.param('projectId')
+			projectName: req.param('projectName')
+		};
+
+		var fileData = {
+			fileName: req.param('fileName')
+		};
+
+		if(userData.userName == req.session.userName && projectData.projectName == req.session.projectName){
+
+			console.log("true");
+
+
+			DtFile.findOne({fileName: fileData.fileName}).exec(function(err,dtFiles){
+				if(err) {
+					return res.serverError(err);
+				} else {
+					var path = dtFiles.url;
+					console.log("---path--- " + path);
+					jsonFile.readFile(path, function(err, dtFileJSONData) {
+						console.log("J Data = " + JSON.stringify(dtFileJSONData));
+						//return res.view('dtTable1',{ dtFileJSONData : dtFileJSONData});
+						//return res.json(dtFileJSONData);
+						sails.sockets.broadcast("socketProjectRoom", 'jsonFile', dtFileJSONData);
+									return res.ok();
+					})
+				}
+			});
+		}
 	},
 
 	socketJoin: function(req,res){

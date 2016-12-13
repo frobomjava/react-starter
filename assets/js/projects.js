@@ -42,9 +42,11 @@ class ProjectComponent extends React.Component{
 		return(			
 			<ol>		
 				{this.props.myProjects.map((projects,index) => {
-				var userName = this.props.myUserName;				
-				var projID = projects.id;				
-				var url = "/" + userName + "/projects/in/" + projID;
+				var userName = this.props.myUserName;	
+				var projectName = projects.projectName;	
+				var url = "/" + userName + "/projects/in/" + projectName;		
+				//var projID = projects.id;				
+				//var url = "/" + userName + "/projects/in/" + projID;
 				return(	
 					<li key={index}><a href={url}>{projects.projectName}</a></li>	
 				);
